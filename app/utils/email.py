@@ -13,8 +13,7 @@ SMTP_PORT = settings.SMTP_PORT
 SMTP_USER = settings.SMTP_USER
 SMTP_PASSWORD = settings.SMTP_PASSWORD
 
-print("SMTP_USER:", SMTP_USER)
-print("SMTP_PASSWORD loaded:", bool(SMTP_PASSWORD))
+
 
 def send_otp_email(to_email: str, otp: str):
     if not SMTP_USER or not SMTP_PASSWORD:

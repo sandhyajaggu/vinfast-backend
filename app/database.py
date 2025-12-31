@@ -9,6 +9,7 @@ from app.utils.config import settings
 
 
 DATABASE_URL = "mysql+pymysql://root:Sandhya1997@localhost:3306/vinfast_db"
+print("DB URL USED:", settings.DATABASE_URL)
 
 engine = create_engine(settings.DATABASE_URL)
 

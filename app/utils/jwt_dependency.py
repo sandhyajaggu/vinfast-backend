@@ -7,7 +7,6 @@ from app.database import get_db
 from app.config import SECRET_KEY, ALGORITHM
 from app.models.admin import Admin
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_current_admin(

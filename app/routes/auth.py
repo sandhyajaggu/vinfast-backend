@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.admin import Admin
 from app.schemas.admin import AdminLogin, TokenResponse
-from app.utils.auth import verify_password,hash_password
+from app.utils.auth import verify_password,hash_password,create_access_token
 from app.utils.jwt_dependency import get_current_admin
 from app.schemas.admin import ChangePasswordRequest
 
@@ -25,7 +25,7 @@ def admin_login(
             detail="Invalid credentials"
         )
 
-    access_token = get_current_admin(
+    access_token = create_access_token(
         data={"sub": admin.email}
     )
 
@@ -33,6 +33,7 @@ def admin_login(
         "access_token": access_token,
         "token_type": "bearer"
     }
+
 
 @router.post("/admin/change-password")
 def change_password(
@@ -52,4 +53,37 @@ def change_password(
     db.commit()
 
     return {"message": "Password changed successfully"}
+
+from app.schemas.admin import ForgotPasswordRequest
+
+@router.post("/forgot-password")
+def forgot_password(
+    data: ForgotPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    admin = db.query(Admin).filter(Admin.email == data.email).first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    otp = generate_otp()
+
+    record = OTP(
+        email=data.email,
+        otp_code=otp,
+        expires_at=otp_expiry()
+    )
+
+    db.add(record)
+    db.commit()
+
+    try:
+        send_otp_email(data.email, otp)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Email sending failed"
+        )
+
+    return {"message": "OTP sent to email"}
+
     
