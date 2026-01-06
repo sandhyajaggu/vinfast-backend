@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
+
 from app.routes import auth, admin_test,otp,jobs,public_jobs,job_applications,contact,csr,onboarding_admin
 from app.models.job_application import JobApplication
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ import os
 load_dotenv()  # 👈 THIS loads .env file
 
 app = FastAPI(title="VINFAST Backend")
+
+app.include_router(auth.router)
 
 # ✅ CORS Configuration (REQUIRED for React)
 app.add_middleware(

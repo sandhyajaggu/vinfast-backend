@@ -26,6 +26,13 @@ router = APIRouter(
     
 )
 
+@router.get("/admin/onboarding")
+def admin_onboarding(current_admin=Depends(get_current_admin)):
+    return {
+        "message": "Admin authenticated",
+        "admin": current_admin
+    }
+
 
 @router.post("/upload")
 def upload_file(file: UploadFile = File(...)):

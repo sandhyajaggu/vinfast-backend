@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.config import SECRET_KEY, ALGORITHM
+from app.config import settings
 from app.models.admin import Admin
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -20,7 +20,7 @@ def get_current_admin(
     )
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str | None = payload.get("sub")
         if email is None:
             raise credentials_exception

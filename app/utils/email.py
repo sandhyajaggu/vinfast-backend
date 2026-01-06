@@ -1,34 +1,28 @@
-import os
 import smtplib
 from email.mime.text import MIMEText
-
-from email.message import EmailMessage
-from app.utils.config import settings
-
-
-
-
-SMTP_HOST = settings.SMTP_HOST
-SMTP_PORT = settings.SMTP_PORT
-SMTP_USER = settings.SMTP_USER
-SMTP_PASSWORD = settings.SMTP_PASSWORD
-
-
+from email.mime.multipart import MIMEMultipart
+from app.config import settings
 
 def send_otp_email(to_email: str, otp: str):
-    if not SMTP_USER or not SMTP_PASSWORD:
-        raise Exception("SMTP credentials not configured")
-
-    msg = MIMEText(f"Your OTP is: {otp}")
-    msg["Subject"] = "Password Reset OTP"
-    msg["From"] = SMTP_USER
+    msg = MIMEMultipart()
+    msg["From"] = settings.SMTP_EMAIL
     msg["To"] = to_email
+    msg["Subject"] = "Admin Password Reset OTP"
 
-    try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+    body = f"""
+Hello,
+
+Your OTP is: {otp}
+This OTP is valid for 5 minutes.
+
+If you did not request this, please ignore this email.
+"""
+    msg.attach(MIMEText(body, "plain"))
+
+    server = smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT)
+    if settings.SMTP_USE_TLS:
         server.starttls()
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-    except Exception as e:
-        raise Exception(f"Failed to send email: {e}")
+
+    server.login(settings.SMTP_EMAIL, settings.SMTP_PASSWORD)
+    server.send_message(msg)
+    server.quit()

@@ -5,7 +5,7 @@ from datetime import datetime
 from app.database import get_db
 from app.models.otp import OTP
 from app.models.admin import Admin
-from app.schemas.admin import ForgotPasswordRequest,VerifyOTPRequest
+from app.schemas.admin import ForgotPasswordRequest,VerifyOTPRequest,ResetPasswordRequest
 from app.utils.otp import generate_otp, otp_expiry
 from app.utils.email import send_otp_email
 from app.utils.auth import hash_password
@@ -78,7 +78,7 @@ def reset_password(email: str, new_password: str, otp: str, db: Session = Depend
     db.commit()
 
     return {"message": "Password updated successfully"}'''
-
+'''
 @router.post("/forgot-password")
 def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
     admin = db.query(Admin).filter(Admin.email == data.email).first()
@@ -118,7 +118,7 @@ def verify_otp(data: VerifyOTPRequest, db: Session = Depends(get_db)):
     return {"message": "OTP verified"}
 
 @router.post("/reset-password")
-def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
+def reset_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
     record = db.query(OTP).filter(
         OTP.email == data.email,
         OTP.is_used == True
@@ -133,5 +133,6 @@ def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
     db.delete(record)
     db.commit()
 
-    return {"message": "Password reset successful"}
+    return {"message": "Password reset successful"}'''
+
 

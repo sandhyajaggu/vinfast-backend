@@ -26,8 +26,8 @@ db.close()'''
 def create_admin():
     db = SessionLocal()
 
-    email = "admin@vinfast.com"
-    password = "Admin@123"
+    email = "mypersonal.testing01@gmail.com"
+    password = "Kishore@2025"
 
     admin = db.query(Admin).filter(Admin.email == email).first()
 
